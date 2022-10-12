@@ -138,6 +138,7 @@ router.post("/", (req, res, next) => {
 
     types = types.filter((type) => pokemonTypes.includes(type));
     //processing
+    id = Number(id);
     const newPokemon = { name, types, url, id };
 
     data.push(newPokemon);
@@ -210,6 +211,8 @@ router.delete("/:id", (req, res, next) => {
     db.data = data.filter((pokemon) => pokemon.id !== Number(id));
 
     db = JSON.stringify(db);
+    let totalPKM = data.length;
+    db.totalPokemons = totalPKM;
 
     fs.writeFileSync("db.json", db);
     res.status(200).send({});
