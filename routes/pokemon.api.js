@@ -7,6 +7,7 @@ router.get("/", (req, res, next) => {
   const allowFilter = ["search", "type", "page", "limit"];
   try {
     let { page, limit, ...filterQuery } = req.query;
+    console.log(req.query);
     page = parseInt(page) || 1;
     limit = parseInt(limit) || 20;
     const filterKeys = Object.keys(filterQuery);
@@ -135,8 +136,20 @@ router.post("/", (req, res, next) => {
         throw error;
       }
     });
+    // handle Pokemon's type is invalid
+    const noMatchType = types.filter(
+      (type) => !pokemonTypes.includes(type.toLowerCase())
+    );
 
-    types = types.filter((type) => pokemonTypes.includes(type));
+    if (noMatchType.length) {
+      const exception = new Error(`Pokemon's type is invalid `);
+      exception.statusCode = 401;
+      throw exception;
+    }
+
+    //converted to lower case
+    types = types.map((type) => type.toLowerCase());
+
     //processing
     id = Number(id);
     const newPokemon = { name, types, url, id };
